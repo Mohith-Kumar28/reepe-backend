@@ -33,18 +33,18 @@
     "lint": "eslint --debug ./src",
     "lint:write": "eslint --debug ./src --fix",
     "prettier": "prettier \"**/*.+(js|jsx|json|css|md)\"",
-    "prettier:write": "prettier --write \"**/*.+(js|jsx|json|css|md)\""
+    "prettier:write": "prettier --write \"**/*.+(js|jsx|json|css|md)\"",
+    "prepare": "husky",
+    "check-types": "tsc --noEmit --pretty"
   },
-  "author": "Watscho Aiwasov",
+  "author": "Mohith_Kumar",
   "license": "MIT",
   "devDependencies": {
     "@commitlint/cli": "^19.2.1",
     "@commitlint/config-conventional": "^19.1.0",
     "@commitlint/cz-commitlint": "^19.2.0",
-    "semantic-release": "^23.0.7",
     "@semantic-release/changelog": "^6.0.3",
     "@semantic-release/git": "^10.0.1",
-    "commitizen": "^4.3.0",
     "@types/bcrypt": "5.0.0",
     "@types/cors": "2.8.12",
     "@types/email-templates": "10.0.1",
@@ -59,13 +59,17 @@
     "@types/validator": "13.7.11",
     "@typescript-eslint/eslint-plugin": "5.39.0",
     "@typescript-eslint/parser": "5.39.0",
+    "commitizen": "^4.3.0",
     "cross-env": "7.0.3",
     "eslint": "8.25.0",
     "eslint-config-prettier": "8.5.0",
     "eslint-plugin-import": "2.26.0",
     "eslint-plugin-prettier": "4.2.1",
     "eslint-plugin-unicorn": "44.0.2",
+    "husky": "^9.0.11",
+    "lint-staged": "^15.2.2",
     "prettier": "2.7.1",
+    "semantic-release": "^23.0.7",
     "ts-node": "10.9.1",
     "ts-node-dev": "2.0.0",
     "tsc-alias": "1.7.0",
@@ -73,6 +77,7 @@
     "typescript": "4.8.4"
   },
   "dependencies": {
+    "autoprefixer": "^10.4.19",
     "bcrypt": "5.1.0",
     "cors": "2.8.5",
     "dotenv": "16.0.3",
@@ -122,5 +127,4 @@
       "@semantic-release/github"
     ]
   }
-
 }
