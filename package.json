@@ -1,13 +1,13 @@
 {
-  "name": "express-mongodb-rest-api-boilerplate",
-  "version": "1.0.3",
-  "description": "A boilerplate for Node.js apps / Rest API / Authentication from scratch - express, mongodb (mongoose).",
+  "name": "reepe-backend",
+  "version": "0.0.0",
+  "description": "",
   "main": "./src",
   "repository": {
     "type": "git",
-    "url": "https://github.com/watscho/express-mongodb-rest-api-boilerplate"
+    "url": ""
   },
-  "bugs": "https://github.com/watscho/express-mongodb-rest-api-boilerplate/issues",
+  "bugs": "",
   "keywords": [
     "express",
     "mongodb",
@@ -24,10 +24,11 @@
   ],
   "scripts": {
     "start": "npm run rm:public && cross-env NODE_ENV=production ts-node --files -r tsconfig-paths/register ./src",
+    "dev": "npm run rm:public && cross-env NODE_ENV=production nodemon --exec ts-node --files -r tsconfig-paths/register ./src",
     "watch": "npm run rm:public && cross-env ts-node-dev --files --respawn --inspect -r tsconfig-paths/register ./src",
     "build": "npm run rm:public && cross-env NODE_ENV=production tsc && tsc-alias && npm run copy:files",
-    "rm:public": "rm -rf ./public",
-    "copy:files": "cp .env ./public/.env && cp -R ./src/templates ./public",
+    "rm:public": "rimraf ./public",
+    "copy:files": "if [ -f .env ]; then cp .env ./public/.env; fi && cp -R ./src/templates ./public",
     "seed": "ts-node --files -r tsconfig-paths/register ./src/seeds",
     "lint": "eslint --debug ./src",
     "lint:write": "eslint --debug ./src --fix",
@@ -78,8 +79,10 @@
     "mongoose": "6.6.5",
     "multer": "1.4.5-lts.1",
     "nodemailer": "6.9.1",
+    "nodemon": "^3.1.0",
     "randomstring": "1.2.3",
     "redis": "4.3.1",
+    "rimraf": "^5.0.7",
     "sharp": "0.31.3",
     "validator": "13.7.0",
     "winston": "3.8.2"
