@@ -12,7 +12,7 @@ import {
 } from '@/contracts/auth'
 import {
   resetPasswordService,
-  verificationService,
+  verificationService, 
   userService
 } from '@/services'
 import { jwtSign } from '@/utils/jwt'
@@ -44,13 +44,16 @@ export const authController = {
         })
       }
 
+
+         
       const { accessToken } = jwtSign(user.id)
 
       return res.status(StatusCodes.OK).json({
         data: { accessToken },
-        message: ReasonPhrases.OK,
-        status: StatusCodes.OK
-      })
+        message: ReasonPhrases.OK, 
+        status: StatusCodes.OK 
+
+                     })
     } catch (error) {
       winston.error(error)
 
@@ -59,7 +62,7 @@ export const authController = {
         status: StatusCodes.BAD_REQUEST
       })
     }
-  },
+ },
 
   signUp: async (
     { body: { email, password } }: IBodyRequest<SignUpPayload>,
