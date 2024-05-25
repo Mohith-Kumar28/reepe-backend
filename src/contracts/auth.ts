@@ -1,8 +1,18 @@
 import { IUser } from './user'
+export interface IAuth {
+  phoneNumber: string
+  userName: string
+  authToken: string
+}
+export type SignInPayload = Pick<
+  IAuth,
+  'phoneNumber' | 'userName' | 'authToken'
+>
 
-export type SignInPayload = Pick<IUser, 'email' | 'password'>
-
-export type SignUpPayload = Pick<IUser, 'email' | 'password'>
+export type SignUpPayload = Pick<
+  IAuth,
+  'phoneNumber' | 'userName' | 'authToken'
+>
 
 export type ResetPasswordPayload = Pick<IUser, 'email'>
 
