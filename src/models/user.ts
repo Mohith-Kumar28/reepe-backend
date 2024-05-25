@@ -2,7 +2,7 @@ import { Schema, model } from 'mongoose'
 import { compareSync } from 'bcrypt'
 
 import { IUser, IUserMethods, UserModel } from '@/contracts/user'
-
+//Test
 const schema = new Schema<IUser, UserModel, IUserMethods>(
   {
     email: String,
