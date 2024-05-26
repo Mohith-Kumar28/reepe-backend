@@ -1,15 +1,19 @@
 import { NextFunction, Response } from 'express'
 import { StatusCodes, ReasonPhrases } from 'http-status-codes'
 
-import { IContextRequest, IUserRequest } from '@/contracts/request'
+import {
+  IAuthRequest,
+  IContextRequest,
+  IUserRequest
+} from '@/contracts/request'
 
 export const authGuard = {
   isAuth: (
-    { context: { user } }: IContextRequest<IUserRequest>,
+    { context: { auth } }: IContextRequest<IAuthRequest>,
     res: Response,
     next: NextFunction
   ) => {
-    if (user) {
+    if (auth) {
       return next()
     }
 

@@ -1,6 +1,7 @@
 import { Request } from 'express'
 import { ParamsDictionary } from 'express-serve-static-core'
 import { Document } from 'mongoose'
+import { IAuth } from './auth'
 
 import { IUser } from './user'
 
@@ -32,5 +33,10 @@ export interface ICombinedRequest<
 
 export interface IUserRequest {
   user: Omit<IUser, 'id'> & Document
+  accessToken: string
+}
+
+export interface IAuthRequest {
+  auth: Omit<IAuth, 'id'> & Document
   accessToken: string
 }

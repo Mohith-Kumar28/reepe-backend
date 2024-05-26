@@ -8,4 +8,4 @@ const schema = new Schema<IAuth>(
   },
   { timestamps: true }
 )
-export const User = model<IAuth>('User', schema)
+export const Auth = model<IAuth>('Auth', schema)
