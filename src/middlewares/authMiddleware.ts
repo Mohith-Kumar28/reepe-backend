@@ -33,7 +33,6 @@ export const authMiddleware = async (
         accessToken
       }
     })
-
     return next()
   } catch (error) {
     return next()
