@@ -12,11 +12,13 @@ import {
 } from '@/contracts/auth'
 import {
   resetPasswordService,
-  verificationService, 
-  userService
+  verificationService,
+  userService,
+  authService
 } from '@/services'
-import { jwtSign } from '@/utils/jwt'
+import { jwtSign, jwtVerifyOfFirebase } from '@/utils/jwt'
 import {
+  IAuthRequest,
   IBodyRequest,
   ICombinedRequest,
   IContextRequest,
@@ -30,30 +32,34 @@ import { redis } from '@/dataSources'
 
 export const authController = {
   signIn: async (
-    { body: { email, password } }: IBodyRequest<SignInPayload>,
+    { body: { phoneNumber, authToken } }: IBodyRequest<SignInPayload>,
     res: Response
   ) => {
     try {
-      const user = await userService.getByEmail(email)
-
-      const comparePassword = user?.comparePassword(password)
-      if (!user || !comparePassword) {
+      const { phoneNumber: phoneNumberAuth } = jwtVerifyOfFirebase({
+        authToken
+      })
+      if (phoneNumberAuth !== phoneNumber) {
+        return res.status(StatusCodes.BAD_REQUEST).json({
+          message: ReasonPhrases.BAD_REQUEST,
+          status: StatusCodes.BAD_REQUEST
+        })
+      }
+      const user = await authService.getByPhoneNumber(phoneNumber)
+      if (!user) {
         return res.status(StatusCodes.NOT_FOUND).json({
           message: ReasonPhrases.NOT_FOUND,
           status: StatusCodes.NOT_FOUND
         })
       }
 
-
-         
       const { accessToken } = jwtSign(user.id)
 
       return res.status(StatusCodes.OK).json({
         data: { accessToken },
-        message: ReasonPhrases.OK, 
-        status: StatusCodes.OK 
-
-                     })
+        message: ReasonPhrases.OK,
+        status: StatusCodes.OK
+      })
     } catch (error) {
       winston.error(error)
 
@@ -62,15 +68,24 @@ export const authController = {
         status: StatusCodes.BAD_REQUEST
       })
     }
- },
+  },
 
   signUp: async (
-    { body: { email, password } }: IBodyRequest<SignUpPayload>,
+    { body: { phoneNumber, authToken } }: IBodyRequest<SignUpPayload>,
     res: Response
   ) => {
     const session = await startSession()
     try {
-      const isUserExist = await userService.isExistByEmail(email)
+      const { phoneNumber: phoneNumberAuth, userName } = jwtVerifyOfFirebase({
+        authToken
+      })
+      const isUserExist = await authService.isExistByPhoneNumber(phoneNumber)
+      if (phoneNumberAuth !== phoneNumber) {
+        return res.status(StatusCodes.BAD_REQUEST).json({
+          message: ReasonPhrases.BAD_REQUEST,
+          status: StatusCodes.BAD_REQUEST
+        })
+      }
 
       if (isUserExist) {
         return res.status(StatusCodes.CONFLICT).json({
@@ -80,50 +95,15 @@ export const authController = {
       }
 
       session.startTransaction()
-      const hashedPassword = await createHash(password)
 
-      const user = await userService.create(
+      const user = await authService.create(
         {
-          email,
-          password: hashedPassword
+          phoneNumber,
+          userName
         },
         session
       )
-
-      const cryptoString = createCryptoString()
-
-      const dateFromNow = createDateAddDaysFromNow(ExpiresInDays.Verification)
-
-      const verification = await verificationService.create(
-        {
-          userId: user.id,
-          email,
-          accessToken: cryptoString,
-          expiresIn: dateFromNow
-        },
-        session
-      )
-
-      await userService.addVerificationToUser(
-        {
-          userId: user.id,
-          verificationId: verification.id
-        },
-        session
-      )
-
       const { accessToken } = jwtSign(user.id)
-
-      const userMail = new UserMail()
-
-      userMail.signUp({
-        email: user.email
-      })
-
-      userMail.verification({
-        email: user.email,
-        accessToken: cryptoString
-      })
 
       await session.commitTransaction()
       session.endSession()
@@ -149,11 +129,11 @@ export const authController = {
   },
 
   signOut: async (
-    { context: { user, accessToken } }: IContextRequest<IUserRequest>,
+    { context: { auth, accessToken } }: IContextRequest<IAuthRequest>,
     res: Response
   ) => {
     try {
-      await redis.client.set(`expiredToken:${accessToken}`, `${user.id}`, {
+      await redis.client.set(`expiredToken:${accessToken}`, `${auth.id}`, {
         EX: process.env.REDIS_TOKEN_EXPIRATION,
         NX: true
       })

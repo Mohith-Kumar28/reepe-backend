@@ -14,6 +14,7 @@ export declare global {
       REDIS_URI: string
       REDIS_TOKEN_EXPIRATION: number
       JWT_SECRET: string
+      JWT_SECRET_FIREBASE: string
       JWT_EXPIRATION: string
       MAIL_HOST: string
       MAIL_PORT: number
