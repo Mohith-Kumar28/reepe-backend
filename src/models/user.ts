@@ -1,36 +1,56 @@
-import { Schema, model } from 'mongoose'
-import { compareSync } from 'bcrypt'
+import mongoose, { Schema, model } from 'mongoose'
 
-import { IUser, IUserMethods, UserModel } from '@/contracts/user'
-//Test
-const schema = new Schema<IUser, UserModel, IUserMethods>(
-  {
-    email: String,
-    password: String,
-    firstName: String,
-    lastName: String,
-    verified: {
-      type: Boolean,
-      default: false
-    },
-    verifications: [{ type: Schema.Types.ObjectId, ref: 'Verification' }],
-    resetPasswords: [{ type: Schema.Types.ObjectId, ref: 'ResetPassword' }]
-  },
-  { timestamps: true }
+const UserSchema = new Schema({
+  userId: { type: String, required: true, unique: true },
+  email: { type: String, unique: true },
+  name: { type: String, required: true },
+  image: { type: String },
+  phoneNumber: { type: Number, required: true, unique: true },
+  address: { type: String },
+  bio: { type: String },
+  confirmed: { type: Boolean, default: false },
+  blocked: { type: Boolean, default: false },
+  createdAt: { type: Date, default: Date.now },
+  updatedAt: { type: Date, default: Date.now }
+})
+
+const RoleSchema = new Schema({
+  // id: { type: String, required: true, unique: true },
+  name: { type: String, required: true, unique: true },
+  type: { type: String, required: true, unique: true },
+  description: { type: String },
+  createdAt: { type: Date, default: Date.now },
+  updatedAt: { type: Date, default: Date.now }
+})
+
+const PermissionSchema = new Schema({
+  // id: { type: String, required: true, unique: true },
+  name: { type: String, required: true },
+  method: { type: String, required: true },
+  route: { type: String, required: true },
+  description: { type: String },
+  roleId: { type: String, ref: 'Role', required: true }, // Reference to Role
+  createdAt: { type: Date, default: Date.now },
+  updatedAt: { type: Date, default: Date.now }
+})
+
+// Client Permission Schema
+const ClientPermissionSchema = new Schema({
+  // id: { type: String, required: true, unique: true },
+  name: { type: String, required: true, unique: true },
+  sort: { type: Number, required: true },
+  menu: { type: String, required: true },
+  path: { type: String, required: true, unique: true },
+  description: { type: String },
+  roleId: { type: String, ref: 'Role', required: true }, // Reference to Role
+  createdAt: { type: Date, default: Date.now },
+  updatedAt: { type: Date, default: Date.now }
+})
+
+export const User = model('User', UserSchema)
+export const Role = model('Role', RoleSchema)
+export const Permission = model('Permission', PermissionSchema)
+export const ClientPermission = model(
+  'ClientPermission',
+  ClientPermissionSchema
 )
-
-schema.methods.comparePassword = function (password: string) {
-  return compareSync(password, this.password)
-}
-
-schema.methods.toJSON = function () {
-  const obj = this.toObject()
-
-  delete obj.password
-  delete obj.verifications
-  delete obj.resetPasswords
-
-  return obj
-}
-
-export const User = model<IUser, UserModel>('User', schema)

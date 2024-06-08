@@ -13,6 +13,7 @@ export const authGuard = {
     res: Response,
     next: NextFunction
   ) => {
+    console.log('gghghhghghghhh')
     if (auth) {
       return next()
     }
@@ -24,11 +25,11 @@ export const authGuard = {
   },
 
   isGuest: (
-    { context: { user } }: IContextRequest<IUserRequest>,
+    { context: { auth } }: IContextRequest<IAuthRequest>,
     res: Response,
     next: NextFunction
   ) => {
-    if (!user) {
+    if (!auth) {
       return next()
     }
 

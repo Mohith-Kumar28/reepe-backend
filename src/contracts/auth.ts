@@ -13,7 +13,3 @@ export type SignUpPayload = Pick<
   IAuth,
   'phoneNumber' | 'userName' | 'authToken'
 >
-
-export type ResetPasswordPayload = Pick<IUser, 'email'>
-
-export type NewPasswordPayload = Pick<IUser, 'password'>
